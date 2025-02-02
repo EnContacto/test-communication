@@ -1,7 +1,7 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-      "Name": "your-dockerhub-username/chat-microservices:latest",
+      "Name": "ztencontacto/chat-microservices:latest",
       "Update": "true"
     },
     "Ports": [
