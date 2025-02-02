@@ -1,0 +1,20 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "Image": {
+      "Name": "your-dockerhub-username/chat-microservices:latest",
+      "Update": "true"
+    },
+    "Ports": [
+      {
+        "ContainerPort": "3003"
+      },
+      {
+        "ContainerPort": "3004"
+      },
+      {
+        "ContainerPort": "3005"
+      }
+    ],
+    "Logging": "/var/log/nginx"
+  }
+  
