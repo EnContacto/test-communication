@@ -26,8 +26,7 @@ jobs:
 
       - name: Build and Push Docker Images
         run: |
-          services=(sendmessage getmessages deletemessage)
-          for service in "${services[@]}"; do
+          for service in sendmessage getmessages deletemessage; do
             echo "Building and pushing $service..."
             docker build -t ${{ env.DOCKER_REPOSITORY }}-$service:latest ./$service
             docker push ${{ env.DOCKER_REPOSITORY }}-$service:latest
@@ -49,12 +48,11 @@ jobs:
               fi
 
               echo 'Installing Docker Compose...'
-              sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-\$(uname -s)-\$(uname -m)" -o /usr/local/bin/docker-compose
+              sudo curl -L 'https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)' -o /usr/local/bin/docker-compose
               sudo chmod +x /usr/local/bin/docker-compose
 
               echo 'Pulling latest Docker images...'
-              services=(sendmessage getmessages deletemessage)
-              for service in "${services[@]}"; do
+              for service in sendmessage getmessages deletemessage; do
                 sudo docker pull ${{ env.DOCKER_REPOSITORY }}-$service:latest
               done
 
