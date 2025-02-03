@@ -1,23 +1,21 @@
-const { dynamoDB } = require("../config/awsConfig");
-const { PutItemCommand } = require("@aws-sdk/client-dynamodb");
+const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
+const { v4: uuidv4 } = require("uuid");
 
-exports.sendMessage = async (message) => {
-  const params = {
-    TableName: process.env.DYNAMODB_TABLE,
-    Item: {
-      messageId: { S: new Date().toISOString() },
-      senderId: { S: message.senderId },
-      receiverId: { S: message.receiverId },
-      messageText: { S: message.messageText },
-      timestamp: { S: message.timestamp }
-    }
-  };
-  
-  try {
+const dynamoDB = new DynamoDBClient({ region: process.env.AWS_REGION });
+
+exports.createMessage = async (messageData) => {
+    const messageId = uuidv4();
+    const params = {
+        TableName: process.env.AWS_DYNAMODB_TABLE,
+        Item: {
+            messageId: { S: messageId },
+            sender: { S: messageData.sender },
+            receiver: { S: messageData.receiver },
+            message: { S: messageData.message },
+            timestamp: { S: messageData.timestamp }
+        }
+    };
+
     await dynamoDB.send(new PutItemCommand(params));
-    return { success: true, message: "Mensaje enviado" };
-  } catch (error) {
-    console.error("Fatal error: ", error);
-    throw new Error("The message could´nt be sent");
-  }
+    return { id: messageId };
 };
