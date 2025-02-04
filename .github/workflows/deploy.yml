@@ -33,7 +33,7 @@ jobs:
           done
 
       - name: Deploy to EC2 Instances
-        run: |
+        run: |-
           echo "Starting deployment to EC2 instances..."
           IFS=',' read -ra HOSTS <<< "${{ secrets.EC2_HOSTS }}"
           for HOST in "${HOSTS[@]}"; do
@@ -63,9 +63,4 @@ jobs:
                 sudo docker pull ${{ env.DOCKER_REPOSITORY }}-$service:latest
               done
 
-              echo "Reiniciando contenedores..."
-              sudo docker-compose down || true
-              sudo docker-compose up -d
-EOF
-            echo "Deployment to $HOST completed."
-          done
+
