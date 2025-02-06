@@ -1,19 +1,29 @@
-const { dynamoDB } = require("../config/awsConfig");
+const AWS = require("aws-sdk");
 const { DeleteItemCommand } = require("@aws-sdk/client-dynamodb");
+
+AWS.config.update({
+  region: "us-east-1"
+});
+
+const dynamoDB = new AWS.DynamoDB.DocumentClient();
+const TABLE_NAME = "Messages";
 
 exports.deleteMessage = async (messageId) => {
   const params = {
-    TableName: process.env.DYNAMODB_TABLE,
+    TableName: TABLE_NAME,
     Key: {
-      messageId: { S: messageId }
+      messageId: messageId
     }
   };
 
   try {
-    await dynamoDB.send(new DeleteItemCommand(params));
-    return { success: true, message: "Mensaje eliminado" };
+    const result = await dynamoDB.delete(params).promise();
+    if (!result) {
+      throw new Error("Message doesn´t exists");
+    }
+    return { success: true, message: "Mensaje delete" };
   } catch (error) {
-    console.error("Error eliminando mensaje: ", error);
-    throw new Error("No se pudo eliminar el mensaje");
+    console.error("Error ", error);
+    throw new Error("Message can+t be delete");
   }
 };

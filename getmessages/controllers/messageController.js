@@ -7,6 +7,7 @@ exports.getMessages = async (req, res) => {
     const messages = await messageService.getMessages(receiverId);
     res.status(200).json(messages);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error retrieving messages: ", error);
+    res.status(500).json({ error: "Unable to fetch messages" });
   }
 };

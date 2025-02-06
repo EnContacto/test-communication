@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install --only=production
 
-COPY . .  
+COPY . /app
 
 EXPOSE 3005 
 

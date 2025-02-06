@@ -1,18 +1,35 @@
-const express = require("express");  // Importar Express
-const bodyParser = require("body-parser");  // Importar body-parser
-const cors = require("cors");  // Importar CORS
-const messageRoutes = require("./routes/messageRoutes");  // Importar rutas de mensajes
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const helmet = require("helmet");
+const dotenv = require("dotenv");
+const messageRoutes = require("./routes/messageRoutes");
+const morgan = require("morgan");
+const winston = require("winston");
+const { swaggerDocs, swaggerUi } = require("./swagger");
 
-const app = express();  // Crear la aplicación Express
-const PORT = process.env.PORT || 3003;  // Definir el puerto (tomado de variables de entorno)
+dotenv.config();
 
-app.use(cors());  // Habilitar CORS
-app.use(bodyParser.json());  // Habilitar JSON en las peticiones
+const app = express();
+app.use(bodyParser.json());
+app.use(cors());
+app.use(helmet());
+app.use(morgan("combined"));
 
-// Cargar rutas de mensajes
-app.use("/", messageRoutes);
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.json(),
+  transports: [new winston.transports.Console()]
+});
 
-// Iniciar el servidor
-app.listen(PORT, () => {
-    console.log(`sendmessage service running on port ${PORT}`);
+// Swagger API documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Cargar rutas correctamente
+app.use("/messages", messageRoutes);
+
+const PORT = process.env.PORT || 3001;
+const HOST = "0.0.0.0";
+app.listen(PORT, HOST, () => {
+  logger.info(`sendmessage service running on port ${PORT}`);
 });
